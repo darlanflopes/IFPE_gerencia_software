@@ -20,3 +20,10 @@ class BancoService:
         if valor <= 0:
             raise ValueError("O valor do crédito deve ser positivo.")
         self.contas[numero].saldo += valor
+    def debito(self, numero: int, valor: int):
+        if numero not in self.contas:
+            raise ValueError("Conta não encontrada.")
+        if valor <= 0:
+            raise ValueError("O valor do débito deve ser positivo.")
+        # Permite saldo negativo
+        self.contas[numero].saldo -= valor
