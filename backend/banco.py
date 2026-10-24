@@ -5,3 +5,8 @@ class Conta:
 class BancoService:
     def __init__(self):
         self.contas = {}  # Persistência em memória
+    def cadastrar_conta(self, numero: int) -> bool:
+        if numero in self.contas:
+            return False
+        self.contas[numero] = Conta(numero)
+        return True
