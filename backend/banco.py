@@ -27,3 +27,11 @@ class BancoService:
             raise ValueError("O valor do débito deve ser positivo.")
         # Permite saldo negativo
         self.contas[numero].saldo -= valor
+    def transferencia(self, origem: int, destino: int, valor: int):
+        if origem not in self.contas or destino not in self.contas:
+            raise ValueError("Conta de origem ou destino não encontrada.")
+        if valor <= 0:
+            raise ValueError("O valor da transferência deve ser positivo.")
+        
+        self.debito(origem, valor)
+        self.credito(destino, valor)
