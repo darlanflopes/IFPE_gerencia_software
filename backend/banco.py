@@ -10,3 +10,7 @@ class BancoService:
             return False
         self.contas[numero] = Conta(numero)
         return True
+    def consultar_saldo(self, numero: int) -> int:
+        if numero not in self.contas:
+            raise ValueError("Conta não encontrada.")
+        return self.contas[numero].saldo
