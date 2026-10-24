@@ -14,3 +14,9 @@ class BancoService:
         if numero not in self.contas:
             raise ValueError("Conta não encontrada.")
         return self.contas[numero].saldo
+    def credito(self, numero: int, valor: int):
+        if numero not in self.contas:
+            raise ValueError("Conta não encontrada.")
+        if valor <= 0:
+            raise ValueError("O valor do crédito deve ser positivo.")
+        self.contas[numero].saldo += valor
