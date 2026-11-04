@@ -25,7 +25,7 @@ class BancoService:
             raise ValueError("Conta não encontrada.")
         if valor <= 0:
             raise ValueError("O valor deve ser positivo.")
-        if self.contas[numero].saldo - valor < 0:
+        if self.contas[numero].saldo - valor <= 0:
             raise ValueError("Saldo insuficiente (não é permitido saldo negativo).")
         self.contas[numero].saldo -= valor
     def transferencia(self, origem: str, destino: str, valor: float):
@@ -33,7 +33,7 @@ class BancoService:
             raise ValueError("Conta de origem ou destino não encontrada.")
         if valor <= 0:
             raise ValueError("O valor deve ser positivo.")
-        if self.contas[origem].saldo - valor < 0:
+        if self.contas[origem].saldo - valor <= 0:
             raise ValueError("Saldo insuficiente na conta de origem.")
 
         self.debito(origem, valor)
