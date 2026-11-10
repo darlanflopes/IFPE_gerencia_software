@@ -10,7 +10,7 @@ def main():
     banco = BancoService()
 
     while True:
-        print("\n--- SISTEMA BANCÁRIO (VERSÃO 2) ---")
+        print("\n--- SISTEMA BANCÁRIO (VERSÃO 3) ---")
         print("1. Cadastrar Conta Simples")
         print("2. Cadastrar Conta Bônus")
         print("3. Cadastrar Conta Poupança")
@@ -40,7 +40,8 @@ def main():
 
             elif opcao == '3':
                 num = input("Número da conta poupança: ")
-                if banco.cadastrar_conta_poupanca(num):
+                saldo_inicial = float(input("Informe o saldo inicial da Conta Poupança: "))
+                if banco.cadastrar_conta_poupanca(num, saldo_inicial):
                     print("Conta poupança cadastrada com sucesso!")
                 else:
                     print("Erro: Conta já existe.")
@@ -49,7 +50,7 @@ def main():
                 num = input("Número da conta: ")
                 saldo = banco.consultar_saldo(num)
                 conta = banco.contas[num]
-                # Se for conta bônus, exibe também os pontos acumulados
+                # Se for conta bônus exibirá os pontos
                 if isinstance(conta, ContaBonus):
                     print(f"Saldo atual: R$ {saldo:.2f} | Pontos Bônus: {conta.pontos}")
                 else:
