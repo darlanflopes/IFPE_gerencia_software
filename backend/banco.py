@@ -106,9 +106,9 @@ class BancoService:
         self.debito(origem, valor)
         self.credito(destino, valor)
 
-        # Regra atualizada da Conta Bônus para Transferências Recebidas: 1 ponto a cada R$ 200,00 reais
+        # Regra atualizada da Conta Bônus para Transferências Recebidas: 1 ponto a cada R$ 150,00 reais
         if isinstance(self.contas[destino], ContaBonus):
-            pontos_ganhos = int(valor // 200)
+            pontos_ganhos = int(valor // 150)
             self.contas[destino].pontos += pontos_ganhos
 
     def render_juros_poupanca(self, numero: str, taxa: float):
