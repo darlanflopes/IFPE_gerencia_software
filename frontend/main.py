@@ -82,7 +82,7 @@ def main():
 
             elif opcao == '8':
                 num = input("Número da conta poupança: ")
-                taxa = float(input("Informe a taxa de juros em percentagem (ex: 10.5 para 10.5%): "))[cite: 7]
+                taxa = float(input("Informe a taxa de juros em percentagem (ex: 10.5 para 10.5%): "))
                 banco.render_juros_poupanca(num, taxa)
                 print("Juros aplicados com sucesso à Conta Poupança!")
                 saldo_atualizado = banco.consultar_saldo(num)
