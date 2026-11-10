@@ -10,7 +10,7 @@ def main():
     banco = BancoService()
 
     while True:
-        print("\n--- SISTEMA BANCÁRIO (VERSÃO 2) ---")
+        print("\n--- SISTEMA BANCÁRIO (VERSÃO 2.0) ---")
         print("1. Cadastrar Conta Simples")
         print("2. Cadastrar Conta Bônus")
         print("3. Cadastrar Conta Poupança")

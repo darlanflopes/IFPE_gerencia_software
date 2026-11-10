@@ -69,7 +69,7 @@ class BancoService:
         
         # Validação: Não deve permitir saldo negativo
         if self.contas[numero].saldo - valor <= 0:
-            raise ValueError("Saldo insuficiente para realizar o débito (não é permitido saldo negativo).")
+            raise ValueError("Saldo insuficiente para realizar o débito (não é permitido saldo negativo, trabalhe).")
             
         self.contas[numero].saldo -= valor
 
