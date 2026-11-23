@@ -1,27 +1,27 @@
 class Conta:
-    def __init__(self, numero: str):
+    def __init__(self, numero: str, saldo_inicial: float = 0.0):
         self.numero = numero
-        self.saldo = 0.0
+        self.saldo = saldo_inicial
+
 
 class ContaSimples(Conta):
-    def __init__(self, numero: str):
-        super().__init__(numero)
+    def __init__(self, numero: str, saldo_inicial: float = 0.0):
+        super().__init__(numero, saldo_inicial)
 
 
 class ContaBonus(Conta):
     def __init__(self, numero: str):
-        super().__init__(numero)
+        super().__init__(numero, 0.0)
         self.pontos = 10  # Pontuação inicial de 10 pontos
 
 
 class ContaPoupanca(Conta):
-    def __init__(self, numero: str):
-        super().__init__(numero)
+    def __init__(self, numero: str, saldo_inicial: float = 0.0):
+        super().__init__(numero, saldo_inicial)
 
     def render_juros(self, taxa: float):
         if taxa < 0:
             raise ValueError("A taxa de juros não pode ser negativa.")
-        # Acrescenta os juros ao saldo com base na taxa percentual informada (ex: 10.5%)
         self.saldo += self.saldo * (taxa / 100.0)
 
 
