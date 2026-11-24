@@ -1,101 +1,155 @@
-import sys
-import os
+import requests
 
-# Adiciona o diretório raiz ao path para importar o backend corretamente
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+BASE_URL = "http://127.0.0.1:5000"
 
-from backend.banco import BancoService, ContaBonus
 
-def main():
-    banco = BancoService()
+def exibir_menu() -> None:
+    print("\n---- SISTEMA BANCÁRIO (PROJETO 2 - REST) ----")
+    print("1. Cadastrar Conta Simples")
+    print("2. Cadastrar Conta Bônus")
+    print("3. Cadastrar Conta Poupança")
+    print("4. Consultar Saldo")
+    print("5. Crédito (Depósito)")
+    print("6. Débito (Saque)")
+    print("7. Transferência")
+    print("8. Render Juros (Conta Poupança)")
+    print("9. Consultar Dados Completos da Conta")
+    print("0. Sair")
 
+
+def cadastrar_conta(tipo: str) -> None:
+    numero = input("Número da conta: ").strip()
+    payload = {"tipo": tipo, "numero": numero}
+
+    if tipo == "poupanca":
+        saldo_inicial = float(input("Saldo inicial da Conta Poupança: "))
+        payload["saldo_inicial"] = saldo_inicial
+
+    resp = requests.post(f"{BASE_URL}/banco/conta/", json=payload, timeout=5)
+    dados = resp.json()
+    if resp.status_code in (200, 201):
+        print(dados.get("mensagem", "Conta cadastrada com sucesso."))
+    else:
+        print(f"Erro: {dados.get('erro', 'Falha ao cadastrar conta.')}")
+
+
+def consultar_saldo() -> None:
+    conta_id = input("Número da conta: ").strip()
+    resp = requests.get(f"{BASE_URL}/banco/conta/{conta_id}/saldo", timeout=5)
+    dados = resp.json()
+    if resp.status_code == 200:
+        print(f"Saldo atual da conta {dados['numero']}: R$ {dados['saldo']:.2f}")
+    else:
+        print(f"Erro: {dados.get('erro', 'Conta não encontrada.')}")
+
+
+def operacao_valor(conta_id: str, acao: str, valor: float) -> None:
+    resp = requests.put(
+        f"{BASE_URL}/banco/conta/{conta_id}/{acao}",
+        json={"valor": valor},
+        timeout=5,
+    )
+    dados = resp.json()
+    if resp.status_code == 200:
+        print(dados.get("mensagem", "Operação concluída."))
+        if "saldo" in dados:
+            print(f"Novo saldo: R$ {dados['saldo']:.2f}")
+    else:
+        print(f"Erro: {dados.get('erro', 'Falha na operação.')}")
+
+
+def transferencia() -> None:
+    origem = input("Conta de origem: ").strip()
+    destino = input("Conta de destino: ").strip()
+    valor = float(input("Valor da transferência: "))
+
+    payload = {
+        "from": origem,
+        "to": destino,
+        "amount": valor,
+    }
+    resp = requests.put(f"{BASE_URL}/banco/conta/transferencia", json=payload, timeout=5)
+    dados = resp.json()
+    if resp.status_code == 200:
+        print(dados.get("mensagem", "Transferência realizada com sucesso."))
+    else:
+        print(f"Erro: {dados.get('erro', 'Falha na transferência.')}")
+
+
+def render_juros() -> None:
+    numero = input("Número da Conta Poupança: ").strip()
+    taxa = float(input("Taxa de juros (%): "))
+
+    resp = requests.put(
+        f"{BASE_URL}/banco/conta/rendimento",
+        json={"numero": numero, "taxa": taxa},
+        timeout=5,
+    )
+    dados = resp.json()
+    if resp.status_code == 200:
+        print(dados.get("mensagem", "Rendimento aplicado com sucesso."))
+        if "saldo" in dados:
+            print(f"Novo saldo: R$ {dados['saldo']:.2f}")
+    else:
+        print(f"Erro: {dados.get('erro', 'Falha ao aplicar rendimento.')}")
+
+
+def consultar_dados_conta() -> None:
+    numero = input("Número da conta a consultar: ").strip()
+    resp = requests.get(f"{BASE_URL}/banco/conta/", params={"numero": numero}, timeout=5)
+    dados = resp.json()
+
+    if resp.status_code == 200:
+        print("\n--- DADOS DA CONTA ---")
+        print(f"Tipo: {dados['tipo']}")
+        print(f"Número: {dados['numero']}")
+        print(f"Saldo: R$ {dados['saldo']:.2f}")
+        if dados.get("bonus") is not None:
+            print(f"Bônus (Pontos): {dados['bonus']}")
+    else:
+        print(f"Erro: {dados.get('erro', 'Conta não encontrada.')}")
+
+
+def main() -> None:
     while True:
-        print("\n--- SISTEMA BANCÁRIO (VERSÃO 3) ---")
-        print("1. Cadastrar Conta Simples")
-        print("2. Cadastrar Conta Bônus")
-        print("3. Cadastrar Conta Poupança")
-        print("4. Consultar Saldo")
-        print("5. Crédito (Depósito)")
-        print("6. Débito (Saque)")
-        print("7. Transferência")
-        print("8. Render Juros (Conta Poupança)")
-        print("0. Sair")
-        
-        opcao = input("Escolha uma opção: ")
+        exibir_menu()
+        opcao = input("Escolha uma opção: ").strip()
 
         try:
-            if opcao == '1':
-                num = input("Número da conta simples: ")
-                if banco.cadastrar_conta_simples(num):
-                    print("Conta simples cadastrada com sucesso!")
-                else:
-                    print("Erro: Conta já existe.")
-
-            elif opcao == '2':
-                num = input("Número da conta bônus: ")
-                if banco.cadastrar_conta_bonus(num):
-                    print("Conta bônus cadastrada com sucesso! (Inicia com 10 pontos)")
-                else:
-                    print("Erro: Conta já existe.")
-
-            elif opcao == '3':
-                num = input("Número da conta poupança: ")
-                saldo_inicial = float(input("Informe o saldo inicial da Conta Poupança: "))
-                if banco.cadastrar_conta_poupanca(num, saldo_inicial):
-                    print("Conta poupança cadastrada com sucesso!")
-                else:
-                    print("Erro: Conta já existe.")
-
-            elif opcao == '4':
-                num = input("Número da conta: ")
-                saldo = banco.consultar_saldo(num)
-                conta = banco.contas[num]
-                # Se for conta bônus exibirá os pontos
-                if isinstance(conta, ContaBonus):
-                    print(f"Saldo atual: R$ {saldo:.2f} | Pontos Bônus: {conta.pontos}")
-                else:
-                    print(f"Saldo atual: R$ {saldo:.2f}")
-
-            elif opcao == '5':
-                num = input("Número da conta: ")
+            if opcao == "1":
+                cadastrar_conta("simples")
+            elif opcao == "2":
+                cadastrar_conta("bonus")
+            elif opcao == "3":
+                cadastrar_conta("poupanca")
+            elif opcao == "4":
+                consultar_saldo()
+            elif opcao == "5":
+                conta_id = input("Número da conta: ").strip()
                 valor = float(input("Valor do crédito: "))
-                banco.credito(num, valor)
-                print("Crédito realizado com sucesso!")
-                conta = banco.contas[num]
-                if isinstance(conta, ContaBonus):
-                    print(f"Pontuação atualizada da Conta Bônus: {conta.pontos} pontos.")
-
-            elif opcao == '6':
-                num = input("Número da conta: ")
+                operacao_valor(conta_id, "credito", valor)
+            elif opcao == "6":
+                conta_id = input("Número da conta: ").strip()
                 valor = float(input("Valor do débito: "))
-                banco.debito(num, valor)
-                print("Débito realizado com sucesso!")
-
-            elif opcao == '7':
-                origem = input("Número da conta de origem: ")
-                destino = input("Número da conta de destino: ")
-                valor = float(input("Valor da transferência: "))
-                banco.transferencia(origem, destino, valor)
-                print("Transferência realizada com sucesso!")
-                conta_dest = banco.contas[destino]
-                if isinstance(conta_dest, ContaBonus):
-                    print(f"Conta de destino é Bônus. Pontuação atualizada: {conta_dest.pontos} pontos.")
-
-            elif opcao == '8':
-                num = input("Número da conta poupança: ")
-                taxa = float(input("Informe a taxa de juros em percentagem (ex: 10.5 para 10.5%): "))
-                banco.render_juros_poupanca(num, taxa)
-                print("Juros aplicados com sucesso à Conta Poupança!")
-                saldo_atualizado = banco.consultar_saldo(num)
-                print(f"Novo saldo após juros: R$ {saldo_atualizado:.2f}")
-
-            elif opcao == '0':
-                print("Saindo do sistema...")
+                operacao_valor(conta_id, "debito", valor)
+            elif opcao == "7":
+                transferencia()
+            elif opcao == "8":
+                render_juros()
+            elif opcao == "9":
+                consultar_dados_conta()
+            elif opcao == "0":
+                print("Encerrando o sistema...")
                 break
             else:
-                print("Opção inválida!")
-        except Exception as e:
-            print(f"Erro: {e}")
+                print("Opção inválida.")
+        except ValueError:
+            print("Erro: informe um valor numérico válido.")
+        except requests.exceptions.ConnectionError:
+            print("Erro: não foi possível conectar à API em http://127.0.0.1:5000. Verifique se backend/api.py está rodando.")
+        except requests.exceptions.RequestException as e:
+            print(f"Erro na requisição HTTP: {e}")
+
 
 if __name__ == "__main__":
     main()

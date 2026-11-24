@@ -1,0 +1,47 @@
+name: Release Candidate (rc-X.Y)
+
+on:
+  push:
+    tags:
+      - "rc-*"
+
+jobs:
+  rc-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Resolver dependências
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install flake8
+
+      - name: Build (checagem sintática / compilação)
+        run: python -m compileall -q backend frontend tests
+
+      - name: Quality (análise estática com flake8)
+        run: flake8 backend frontend tests --max-line-length=120
+
+      - name: Executar testes unitários
+        run: python -m unittest discover -s tests -v
+
+      - name: Empacotar versão (.zip e .tar.gz)
+        run: |
+          TAG_NAME="${GITHUB_REF_NAME}"
+          mkdir -p dist
+          zip -r "dist/sistema-bancario-${TAG_NAME}.zip" backend frontend tests requirements.txt -x "*/__pycache__/*"
+          tar -czf "dist/sistema-bancario-${TAG_NAME}.tar.gz" --exclude="__pycache__" backend frontend tests requirements.txt
+
+      - name: Disponibilizar pacote para download
+        uses: actions/upload-artifact@v4
+        with:
+          name: pacote-${{ github.ref_name }}
+          path: dist/*
