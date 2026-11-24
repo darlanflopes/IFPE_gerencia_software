@@ -16,8 +16,6 @@ def exibir_menu() -> None:
     print("9. Consultar Dados Completos da Conta")
     print("0. Sair")
 
-
-
 def cadastrar_conta(tipo: str) -> None:
     numero = input("Número da conta: ").strip()
     payload = {"tipo": tipo, "numero": numero}
