@@ -10,7 +10,7 @@ def main():
     banco = BancoService()
 
     while True:
-        print("\n--- SISTEMA BANCÁRIO (VERSÃO 3) ---")
+        print("\n--- SISTEMA BANCÁRIO (PROJETO 2) ---")
         print("1. Cadastrar Conta Simples")
         print("2. Cadastrar Conta Bônus")
         print("3. Cadastrar Conta Poupança")
@@ -19,6 +19,7 @@ def main():
         print("6. Débito (Saque)")
         print("7. Transferência")
         print("8. Render Juros (Conta Poupança)")
+        print("9. Consultar Dados Completos da Conta")
         print("0. Sair")
         
         opcao = input("Escolha uma opção: ")
@@ -88,6 +89,16 @@ def main():
                 print("Juros aplicados com sucesso à Conta Poupança!")
                 saldo_atualizado = banco.consultar_saldo(num)
                 print(f"Novo saldo após juros: R$ {saldo_atualizado:.2f}")
+
+            elif opcao == '9':
+                num = input("Número da conta a consultar: ")
+                dados = banco.consultar_dados_conta(num)
+                print("\n--- DADOS DA CONTA ---")
+                print(f"Tipo: {dados['tipo']}")
+                print(f"Número: {dados['numero']}")
+                print(f"Saldo: R$ {dados['saldo']:.2f}")
+                if dados['bonus'] is not None:
+                    print(f"Bônus (Pontos): {dados['bonus']}")
 
             elif opcao == '0':
                 print("Saindo do sistema...")
