@@ -4,7 +4,7 @@ from flask import Flask, jsonify, request
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from backend.banco import BancoService
+from backend.banco import BancoService  # noqa: E402
 
 app = Flask(__name__)
 banco = BancoService()
