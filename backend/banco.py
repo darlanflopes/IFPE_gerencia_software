@@ -117,3 +117,28 @@ class BancoService:
         if not isinstance(self.contas[numero], ContaPoupanca):
             raise TypeError("Esta operação é permitida APENAS para Contas Poupança.")
         self.contas[numero].render_juros(taxa)
+
+    def consultar_dados_conta(self, numero: str) -> dict:
+        if numero not in self.contas:
+            raise ValueError("Conta não encontrada.")
+        
+        conta = self.contas[numero]
+        
+        # Determina o tipo de conta para exibição
+        if isinstance(conta, ContaBonus):
+            tipo = "Conta Bônus"
+            bonus = conta.pontos
+        elif isinstance(conta, ContaPoupanca):
+            tipo = "Conta Poupança"
+            bonus = None
+        else:
+            tipo = "Conta Simples"
+            bonus = None
+
+        # Retorna um dicionário com os dados detalhados solicitados
+        return {
+            "tipo": tipo,
+            "numero": conta.numero,
+            "saldo": conta.saldo,
+            "bonus": bonus
+        }
