@@ -4,7 +4,7 @@ import unittest
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from backend.banco import BancoService, ContaBonus, ContaPoupanca, ContaSimples
+from backend.banco import BancoService, ContaBonus, ContaPoupanca, ContaSimples  # noqa: E402
 
 
 class TestBancoService(unittest.TestCase):

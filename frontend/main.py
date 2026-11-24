@@ -112,8 +112,18 @@ def consultar_dados_conta() -> None:
 
 def main() -> None:
     while True:
-        exibir_menu()
-        opcao = input("Escolha uma opção: ").strip()
+        print("\n--- SISTEMA BANCÁRIO (VERSÃO 2.0) ---")
+        print("1. Cadastrar Conta Simples")
+        print("2. Cadastrar Conta Bônus")
+        print("3. Cadastrar Conta Poupança")
+        print("4. Consultar Saldo")
+        print("5. Crédito (Depósito)")
+        print("6. Débito (Saque)")
+        print("7. Transferência")
+        print("8. Render Juros (Conta Poupança)")
+        print("0. Sair")
+
+        opcao = input("Escolha uma opção: ")
 
         try:
             if opcao == "1":
@@ -146,7 +156,10 @@ def main() -> None:
         except ValueError:
             print("Erro: informe um valor numérico válido.")
         except requests.exceptions.ConnectionError:
-            print("Erro: não foi possível conectar à API em http://127.0.0.1:5000. Verifique se backend/api.py está rodando.")
+            print(
+                "Erro: não foi possível conectar à API em http://127.0.0.1:5000. "
+                "Verifique se backend/api.py está rodando."
+            )
         except requests.exceptions.RequestException as e:
             print(f"Erro na requisição HTTP: {e}")
 
